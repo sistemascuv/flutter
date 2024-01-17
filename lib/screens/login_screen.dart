@@ -56,7 +56,7 @@ class _LoginScreenState extends State<LoginScreen> {
             if (parsedJson.isNotEmpty && parsedJson[0] is Map<String, dynamic>) {
               final Map<String, dynamic> responseData = parsedJson[0] as Map<String, dynamic>;
               message = responseData['MENSSAGE']?.toString();
-              IF (message='OK'){
+              if (message=='OK'){
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
               }
 
