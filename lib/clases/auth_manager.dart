@@ -2,14 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class Auth_Manager {
-
   factory Auth_Manager() => _instance;
 
   Auth_Manager._internal();
   static final Auth_Manager _instance = Auth_Manager._internal();
 
   String? _accessToken;
-  DateTime? _tokenExpiration; // Nueva propiedad para almacenar la fecha de expiración del token
+  DateTime? _tokenExpiration;
 
   String? get accessToken => _accessToken;
 
@@ -26,15 +25,18 @@ class Auth_Manager {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = jsonDecode(
-            response.body) as Map<String, dynamic>;
+        final dynamic responseJson = jsonDecode(response.body);
 
-        _accessToken = responseData['token'] as String;
-
-        // Actualiza la fecha de expiración del token según la respuesta específica de tu servicio
-        _tokenExpiration = DateTime.now().add(
-            Duration(minutes: 30)); // Ejemplo: 30 minutos de duración del token
-
+        if (responseJson is String) {
+          _accessToken = responseJson;
+          _tokenExpiration = DateTime.now().add(Duration(minutes: 30));
+        } else if (responseJson is Map<String, dynamic> &&
+            responseJson.containsKey('token')) {
+          _accessToken = responseJson['token'] as String;
+          _tokenExpiration = DateTime.now().add(Duration(minutes: 30));
+        } else {
+          throw Exception('Error de autenticación: respuesta inesperada.');
+        }
       } else {
         throw Exception('Error de autenticación: ${response.statusCode}');
       }
