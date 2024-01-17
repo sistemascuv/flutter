@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-//import '../Clases/auth_manager.dart';
 import '../clases/auth_manager.dart';
-
+import '../clases/message_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,7 +10,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  Auth_Manager authManager = Auth_Manager(); // AuthManager(); // Crear una instancia de AuthManager
+  Auth_Manager authManager = Auth_Manager();
 
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -41,34 +40,42 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Resto de tu lógica...
-        print('Éxito: ${response.body}');
+        final dynamic jsonResponse = jsonDecode(response.body);
+        print('Tipo de dato de la respuesta: ${response.body.runtimeType}');
+        MessageManager.showMessage(context, 'Tipo de dato de la respuesta: ${jsonResponse.runtimeType}', MessageType.info);
+
+        if (jsonResponse is Map<String, dynamic>) {
+          // Si la respuesta es un mapa, significa que es un JSON directo
+          _handleResponse(jsonResponse);
+        } else {
+          MessageManager.showMessage(context, 'Respuesta inesperada', MessageType.error);
+          print('Respuesta inesperada: $jsonResponse');
+        }
       } else {
-        // Manejo del error de autenticación
+        MessageManager.showMessage(context, 'Error de autenticación: ${response.statusCode}', MessageType.error);
         print('Error de autenticación: ${response.statusCode}');
       }
     } catch (e) {
-      // Manejo de otros errores, como problemas de conexión, etc.
+      MessageManager.showMessage(context, 'Error al realizar la solicitud HTTP: $e', MessageType.error);
       print('Error al realizar la solicitud HTTP: $e');
     }
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Error de autenticación'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
+  void _handleResponse(Map<String, dynamic> responseData) {
+    if (responseData.containsKey("MENSSAGE")) {
+      final message = responseData["MENSSAGE"] as String;
+
+      if (message.isNotEmpty) {
+        MessageManager.showMessage(context, message, MessageType.success);
+        print('Éxito: $message');
+      } else {
+        MessageManager.showMessage(context, 'Operación exitosa', MessageType.success);
+        print('Operación exitosa');
+      }
+    } else {
+      MessageManager.showMessage(context, 'Error en el formato de la respuesta', MessageType.error);
+      print('Error en el formato de la respuesta');
+    }
   }
 
   @override
