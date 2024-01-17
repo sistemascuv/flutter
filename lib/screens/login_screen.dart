@@ -58,6 +58,9 @@ class _LoginScreenState extends State<LoginScreen> {
               message = responseData['MENSSAGE']?.toString();
               if (message=='OK'){
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
+              }else {
+                // Lógica si message es Diferente a 'OK'
+                MessageManager.showMessage(context, 'Mensaje: $message', MessageType.error);
               }
 
 
