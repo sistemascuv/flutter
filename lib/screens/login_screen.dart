@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../clases/auth_manager.dart';
 import '../clases/message_manager.dart';
+import 'registro_usuario.dart';
+import 'recuperar_contrasena.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -11,7 +13,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   Auth_Manager authManager = Auth_Manager();
-
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
@@ -59,11 +60,8 @@ class _LoginScreenState extends State<LoginScreen> {
               if (message=='OK'){
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
               }else {
-                // Lógica si message es Diferente a 'OK'
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.error);
               }
-
-
             } else {
               print('La respuesta del servidor no es un formato JSON esperado');
               return;
@@ -82,15 +80,10 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       if (message != null) {
-        // Puedes mostrar el mensaje o hacer lo que necesites con él
         print('Mensaje: $message');
-        // Luego, puedes usar MessageManager.showMessage con el mensaje
-        // MessageManager.showMessage(context, message, MessageType.success);
       } else {
         print('El campo MENSSAGE no está presente o es nulo en la respuesta del servidor');
       }
-
-
 
       if (message != null) {
         MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
@@ -101,6 +94,21 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       print('Error al realizar la solicitud HTTP: $e');
     }
+  }
+
+  // Funciones para navegar a las nuevas pantallas
+  void _irARegistroUsuario(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RegistroUsuarioScreen()),
+    );
+  }
+
+  void _irARecuperarContrasena(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RecuperarContrasenaScreen()),
+    );
   }
 
   @override
@@ -145,6 +153,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               SizedBox(height: 16.0),
+              // Enlace de Registro en la parte superior
+              TextButton(
+                onPressed: () => _irARegistroUsuario(context),
+                child: Text(
+                  'Registrarse',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+
+              // Botón de Iniciar Sesión
               ElevatedButton(
                 onPressed: _login,
                 style: ElevatedButton.styleFrom(
@@ -154,6 +175,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 child: Text('Iniciar Sesión'),
+              ),
+
+              // Enlace de Recuperar Contraseña en la parte inferior
+              TextButton(
+                onPressed: () => _irARecuperarContrasena(context),
+                child: Text(
+                  'Recuperar Contraseña',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
               ),
             ],
           ),
