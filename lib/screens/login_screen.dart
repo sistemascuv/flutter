@@ -20,10 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
     String password = _passwordController.text;
 
     try {
-      // Verificar si el token es válido
       bool isTokenValid = await authManager.isTokenValid();
 
-      // Si el token no es válido, renovarlo
       if (!isTokenValid) {
         await authManager.refreshAccessToken();
       }
@@ -39,42 +37,66 @@ class _LoginScreenState extends State<LoginScreen> {
         },
       );
 
-      if (response.statusCode == 200) {
-        final dynamic jsonResponse = jsonDecode(response.body);
-        print('Tipo de dato de la respuesta: ${response.body.runtimeType}');
-        MessageManager.showMessage(context, 'Tipo de dato de la respuesta: ${jsonResponse.runtimeType}', MessageType.info);
+      final dynamic responseJson = jsonDecode(response.body);
 
-        if (jsonResponse is Map<String, dynamic>) {
-          // Si la respuesta es un mapa, significa que es un JSON directo
-          _handleResponse(jsonResponse);
-        } else {
-          MessageManager.showMessage(context, 'Respuesta inesperada', MessageType.error);
-          print('Respuesta inesperada: $jsonResponse');
+      String? message;
+
+      if (responseJson is List && responseJson.isNotEmpty) {
+        final Map<String, dynamic> responseData = responseJson[0] as Map<String, dynamic>;
+        message = responseData['MENSSAGE']?.toString();
+      } else if (responseJson is Map<String, dynamic>) {
+        message = responseJson['MENSSAGE']?.toString();
+      } else if (responseJson is String) {
+        try {
+          final dynamic parsedJson = jsonDecode(responseJson);
+
+          if (parsedJson is Map<String, dynamic>) {
+            message = parsedJson['MENSSAGE']?.toString();
+          } else if (parsedJson is List) {
+            if (parsedJson.isNotEmpty && parsedJson[0] is Map<String, dynamic>) {
+              final Map<String, dynamic> responseData = parsedJson[0] as Map<String, dynamic>;
+              message = responseData['MENSSAGE']?.toString();
+              IF (message='OK'){
+                MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
+              }
+
+
+            } else {
+              print('La respuesta del servidor no es un formato JSON esperado');
+              return;
+            }
+          } else {
+            print('La respuesta del servidor no es un formato JSON esperado');
+            return;
+          }
+        } catch (e) {
+          print('Error al decodificar la cadena JSON: $e');
+          return;
         }
       } else {
-        MessageManager.showMessage(context, 'Error de autenticación: ${response.statusCode}', MessageType.error);
-        print('Error de autenticación: ${response.statusCode}');
+        print('Tipo de respuesta inesperado: ${responseJson.runtimeType}');
+        return;
+      }
+
+      if (message != null) {
+        // Puedes mostrar el mensaje o hacer lo que necesites con él
+        print('Mensaje: $message');
+        // Luego, puedes usar MessageManager.showMessage con el mensaje
+        // MessageManager.showMessage(context, message, MessageType.success);
+      } else {
+        print('El campo MENSSAGE no está presente o es nulo en la respuesta del servidor');
+      }
+
+
+
+      if (message != null) {
+        MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
+        print('Mensaje: $message');
+      } else {
+        print('La respuesta del servidor no contiene un mensaje esperado');
       }
     } catch (e) {
-      MessageManager.showMessage(context, 'Error al realizar la solicitud HTTP: $e', MessageType.error);
       print('Error al realizar la solicitud HTTP: $e');
-    }
-  }
-
-  void _handleResponse(Map<String, dynamic> responseData) {
-    if (responseData.containsKey("MENSSAGE")) {
-      final message = responseData["MENSSAGE"] as String;
-
-      if (message.isNotEmpty) {
-        MessageManager.showMessage(context, message, MessageType.success);
-        print('Éxito: $message');
-      } else {
-        MessageManager.showMessage(context, 'Operación exitosa', MessageType.success);
-        print('Operación exitosa');
-      }
-    } else {
-      MessageManager.showMessage(context, 'Error en el formato de la respuesta', MessageType.error);
-      print('Error en el formato de la respuesta');
     }
   }
 
