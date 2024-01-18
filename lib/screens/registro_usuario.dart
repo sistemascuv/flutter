@@ -1,6 +1,9 @@
-// registro_usuario.dart
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import '../clases/message_manager.dart'; // Asegúrate de importar tu clase MessageManager
+import 'login_screen.dart';
+import '../clases/auth_manager.dart';
 
 class RegistroUsuarioScreen extends StatefulWidget {
   @override
@@ -8,12 +11,77 @@ class RegistroUsuarioScreen extends StatefulWidget {
 }
 
 class _RegistroUsuarioScreenState extends State<RegistroUsuarioScreen> {
+
+  Auth_Manager authManager = Auth_Manager();
+
   TextEditingController _cedulaController = TextEditingController();
   TextEditingController _correoController = TextEditingController();
 
-  void _registrarUsuario() {
-    // Implementa la lógica de registro aquí
-    // Puedes enviar los datos al servidor, mostrar mensajes, etc.
+  Future<void> _registrarUsuario() async {
+    String cedula = _cedulaController.text;
+    String correo = _correoController.text;
+
+    try {
+      // Agrega la lógica para validar el token aquí
+      // ...
+
+      bool isTokenValid = await authManager.isTokenValid();
+
+      if (!isTokenValid) {
+        await authManager.refreshAccessToken();
+      }
+
+      String? accessToken = authManager.accessToken;
+
+      final response = await http.post(
+        Uri.parse('http://cscsrv002.consorcio.com:8081/wbsWebsisApp/api/Registro_usuario/postall?AspxAutoDetectCookieSupport=1'),
+        body: jsonEncode({'_USUARIO': correo, '_CEDULA': cedula}),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      final dynamic responseJson = jsonDecode(response.body);
+
+      String? message;
+      String? result;
+
+      if (responseJson is List && responseJson.isNotEmpty) {
+        final Map<String, dynamic> responseData = responseJson[0] as Map<String, dynamic>;
+        message = responseData['MENSSAGE']?.toString();
+      } else if (responseJson is Map<String, dynamic>) {
+        message = responseJson['MENSSAGE']?.toString();
+      } else if (responseJson is String) {
+        try {
+          final dynamic parsedJson = jsonDecode(responseJson);
+          final Map<String, dynamic> responseData = parsedJson[0] as Map<String, dynamic>;
+          message = responseData['MENSSAGE']?.toString();
+          result = responseData['RESULTADO']?.toString();
+          if (result=='OK'){
+            MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
+            await Future.delayed(Duration(seconds: 5)); // Ajusta el tiempo según sea necesario
+            Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginScreen()),);
+
+          }else {
+            MessageManager.showMessage(context, 'Mensaje: $message', MessageType.error);
+          }
+
+        } catch (e) {
+          print('Error al decodificar la cadena JSON: $e');
+          MessageManager.showMessage(context, 'Mensaje: $e', MessageType.error);
+          return;
+        }
+      } else {
+        print('Tipo de respuesta inesperado: ${responseJson.runtimeType}');
+        MessageManager.showMessage(context, 'Mensaje: ${responseJson.runtimeType}', MessageType.error);
+        return;
+      }
+
+
+    } catch (e) {
+      print('Error al realizar la solicitud HTTP: $e');
+    }
   }
 
   @override
