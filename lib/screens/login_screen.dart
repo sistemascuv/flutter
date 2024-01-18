@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../clases/auth_manager.dart';
 import '../clases/message_manager.dart';
+import '../clases/menu.dart';
 import 'registro_usuario.dart';
 import 'recuperar_contrasena.dart';
 
@@ -58,6 +59,9 @@ class _LoginScreenState extends State<LoginScreen> {
               final Map<String, dynamic> responseData = parsedJson[0] as Map<String, dynamic>;
               message = responseData['MENSSAGE']?.toString();
               if (message=='OK'){
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => menu()),);
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
               }else {
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.error);
