@@ -79,18 +79,18 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      if (message != null) {
-        print('Mensaje: $message');
-      } else {
-        print('El campo MENSSAGE no está presente o es nulo en la respuesta del servidor');
-      }
+     // if (message != null) {
+    //    print('Mensaje: $message');
+     // } else {
+     //   print('El campo MENSSAGE no está presente o es nulo en la respuesta del servidor');
+     // }
 
-      if (message != null) {
-        MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
-        print('Mensaje: $message');
-      } else {
-        print('La respuesta del servidor no contiene un mensaje esperado');
-      }
+     // if (message != null) {
+     //   MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
+     //   print('Mensaje: $message');
+     // } else {
+      //  print('La respuesta del servidor no contiene un mensaje esperado');
+      //}
     } catch (e) {
       print('Error al realizar la solicitud HTTP: $e');
     }

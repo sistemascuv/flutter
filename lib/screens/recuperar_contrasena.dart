@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../clases/auth_manager.dart';
 import '../clases/message_manager.dart';
+import 'login_screen.dart';
 
 class RecuperarContrasenaScreen extends StatefulWidget {
   @override
@@ -63,10 +64,13 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> {
               result = responseData['RESULTADO']?.toString();
               if (result=='OK'){
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
+                await Future.delayed(Duration(seconds: 5)); // Ajusta el tiempo según sea necesario
+                Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginScreen()),);
+
               }else {
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.error);
               }
-              Navigator.pop(context);
+
 
 
             } else {

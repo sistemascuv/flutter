@@ -24,18 +24,34 @@ class MessageManager {
         break;
     }
 
-    final snackBar = SnackBar(
-      content: Row(
-        children: [
-          Icon(icon, color: Colors.white),
-          SizedBox(width: 8),
-          Text(message, style: TextStyle(color: Colors.white)),
-        ],
-      ),
-      backgroundColor: backgroundColor,
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Row(
+            children: [
+              Icon(icon, color: Colors.white),
+              SizedBox(width: 8),
+              Expanded(
+                child: Text(message, style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          ),
+          backgroundColor: backgroundColor,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el AlertDialog
+              },
+              child: Text(
+                'Aceptar',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
     );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
 
