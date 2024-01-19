@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../clases/auth_manager.dart';
 import '../clases/message_manager.dart';
-import '../clases/menu.dart';
+import 'screens/Home_Screen.dart';
 import 'registro_usuario.dart';
 import 'recuperar_contrasena.dart';
 
@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
               if (message=='OK'){
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => menu()),);
+                  MaterialPageRoute(builder: (context) => home_screen()),);
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
               }else {
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.error);
