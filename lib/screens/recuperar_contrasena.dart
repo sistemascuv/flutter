@@ -32,7 +32,7 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> {
 
       // Llamada a la API para recuperar la contraseña
       final response = await http.post(
-        Uri.parse('http://cscsrv002.consorcio.com:8081/wbsWebsisApp/api/Recupera_Contrasena/postall?AspxAutoDetectCookieSupport=1'),
+        Uri.parse('http://webapicuv.urvaseo.com:8081/wbsWebsisApp/api/Recupera_Contrasena/postall?AspxAutoDetectCookieSupport=1'),
         body: jsonEncode({'_USUARIO': email}),
         headers: {
           'Content-Type': 'application/json',

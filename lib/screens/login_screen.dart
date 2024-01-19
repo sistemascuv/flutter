@@ -8,8 +8,6 @@ import 'home_screen.dart';
 import 'registro_usuario.dart';
 import 'recuperar_contrasena.dart';
 
-
-
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -34,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
       String? accessToken = authManager.accessToken;
 
       final response = await http.post(
-        Uri.parse('http://cscsrv002.consorcio.com:8081/wbsWebsisApp/api/LoginWebsis/postall?AspxAutoDetectCookieSupport=1'),
+        Uri.parse('http://webapicuv.urvaseo.com:8081/wbsWebsisApp/api/LoginWebsis/postall?AspxAutoDetectCookieSupport=1'),
         body: jsonEncode({'_EMPRESA': 45, '_USUARIO': username, '_PASS': password}),
         headers: {
           'Content-Type': 'application/json',
@@ -61,14 +59,13 @@ class _LoginScreenState extends State<LoginScreen> {
             if (parsedJson.isNotEmpty && parsedJson[0] is Map<String, dynamic>) {
               final Map<String, dynamic> responseData = parsedJson[0] as Map<String, dynamic>;
               message = responseData['MENSSAGE']?.toString();
-              if (message=='OK'){
-
-
+              if (message=='OK') {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => home_screen()),);
+                  MaterialPageRoute(builder: (context) => home_screen()),
+                );
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
-              }else {
+              } else {
                 MessageManager.showMessage(context, 'Mensaje: $message', MessageType.error);
               }
             } else {
@@ -87,19 +84,6 @@ class _LoginScreenState extends State<LoginScreen> {
         print('Tipo de respuesta inesperado: ${responseJson.runtimeType}');
         return;
       }
-
-     // if (message != null) {
-    //    print('Mensaje: $message');
-     // } else {
-     //   print('El campo MENSSAGE no está presente o es nulo en la respuesta del servidor');
-     // }
-
-     // if (message != null) {
-     //   MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
-     //   print('Mensaje: $message');
-     // } else {
-      //  print('La respuesta del servidor no contiene un mensaje esperado');
-      //}
     } catch (e) {
       print('Error al realizar la solicitud HTTP: $e');
     }
@@ -135,69 +119,69 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         child: Padding(
           padding: EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: 50.0,
-                backgroundImage: AssetImage('assets/urvaseo.jpg'),
-              ),
-              SizedBox(height: 20.0),
-              TextField(
-                controller: _usernameController,
-                decoration: InputDecoration(
-                  labelText: 'Usuario',
-                  filled: true,
-                  fillColor: Colors.white,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 50.0,
+                  backgroundImage: AssetImage('assets/urvaseo.jpg'),
                 ),
-              ),
-              SizedBox(height: 16.0),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Contraseña',
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-              SizedBox(height: 16.0),
-              // Enlace de Registro en la parte superior
-              TextButton(
-                onPressed: () => _irARegistroUsuario(context),
-                child: Text(
-                  'Registrarse',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
+                SizedBox(height: 20.0),
+                TextField(
+                  controller: _usernameController,
+                  decoration: InputDecoration(
+                    labelText: 'Usuario',
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                 ),
-              ),
-
-              // Botón de Iniciar Sesión
-              ElevatedButton(
-                onPressed: _login,
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.lightGreen,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                SizedBox(height: 16.0),
+                TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Contraseña',
+                    filled: true,
+                    fillColor: Colors.white,
                   ),
                 ),
-                child: Text('Iniciar Sesión'),
-              ),
-
-              // Enlace de Recuperar Contraseña en la parte inferior
-              TextButton(
-                onPressed: () => _irARecuperarContrasena(context),
-                child: Text(
-                  'Recuperar Contraseña',
-                  style: TextStyle(
-                    color: Colors.blue,
-                    decoration: TextDecoration.underline,
+                SizedBox(height: 16.0),
+                // Enlace de Registro en la parte superior
+                TextButton(
+                  onPressed: () => _irARegistroUsuario(context),
+                  child: Text(
+                    'Registrarse',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
-              ),
-            ],
+                // Botón de Iniciar Sesión
+                ElevatedButton(
+                  onPressed: _login,
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.lightGreen,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  child: Text('Iniciar Sesión'),
+                ),
+                // Enlace de Recuperar Contraseña en la parte inferior
+                TextButton(
+                  onPressed: () => _irARecuperarContrasena(context),
+                  child: Text(
+                    'Recuperar Contraseña',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

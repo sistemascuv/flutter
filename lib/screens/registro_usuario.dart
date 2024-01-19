@@ -34,7 +34,7 @@ class _RegistroUsuarioScreenState extends State<RegistroUsuarioScreen> {
       String? accessToken = authManager.accessToken;
 
       final response = await http.post(
-        Uri.parse('http://cscsrv002.consorcio.com:8081/wbsWebsisApp/api/Registro_usuario/postall?AspxAutoDetectCookieSupport=1'),
+        Uri.parse('http://webapicuv.urvaseo.com:8081/wbsWebsisApp/api/Registro_usuario/postall?AspxAutoDetectCookieSupport=1'),
         body: jsonEncode({'_USUARIO': correo, '_CEDULA': cedula}),
         headers: {
           'Content-Type': 'application/json',
