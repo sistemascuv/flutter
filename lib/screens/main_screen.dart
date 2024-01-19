@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../clases/menu.dart';
+import '../clases/usuario.dart';
 
 class MainScreen extends StatelessWidget {
   @override

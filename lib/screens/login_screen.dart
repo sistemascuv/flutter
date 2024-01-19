@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../clases/auth_manager.dart';
 import '../clases/message_manager.dart';
-import 'screens/Home_Screen.dart';
+import 'home_screen.dart';
 import 'registro_usuario.dart';
 import 'recuperar_contrasena.dart';
 

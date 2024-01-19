@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Home_Screen extends StatefulWidget {
+class home_screen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<Home_Screen> {
+class _HomeScreenState extends State<home_screen> {
   int _selectedIndex = 0;
 
   @override
