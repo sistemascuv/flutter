@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../clases/auth_manager.dart';
 import '../clases/message_manager.dart';
+import '../clases/usuario_login.dart';
 import 'home_screen.dart';
 import 'registro_usuario.dart';
 import 'recuperar_contrasena.dart';
+
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -59,6 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
               final Map<String, dynamic> responseData = parsedJson[0] as Map<String, dynamic>;
               message = responseData['MENSSAGE']?.toString();
               if (message=='OK'){
+
+
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => home_screen()),);
