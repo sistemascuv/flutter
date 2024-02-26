@@ -160,7 +160,6 @@ const Map<String, List<String>> kWebTestFileKnownFailures = <String, List<String
 
     // These tests are broken and need to be fixed.
     // TODO(yjbanov): https://github.com/flutter/flutter/issues/71604
-    'test/painting/text_style_test.dart',
     'test/material/text_field_test.dart',
     'test/widgets/performance_overlay_test.dart',
     'test/widgets/html_element_view_test.dart',
@@ -815,6 +814,15 @@ Future<void> _runFrameworkTests() async {
     );
   }
 
+  Future<void> runImpeller() async {
+    printProgress('${green}Running packages/flutter tests $reset in Impeller$reset');
+    await _runFlutterTest(
+      path.join(flutterRoot, 'packages', 'flutter'),
+      options: <String>['--enable-impeller'],
+    );
+  }
+
+
   Future<void> runLibraries() async {
     final List<String> tests = Directory(path.join(flutterRoot, 'packages', 'flutter', 'test'))
       .listSync(followLinks: false)
@@ -833,19 +841,16 @@ Future<void> _runFrameworkTests() async {
   }
 
   Future<void> runExampleTests() async {
-    // TODO(gspencergoog): Currently Linux LUCI bots can't run desktop Flutter applications, https://github.com/flutter/flutter/issues/90676
-    if (!Platform.isLinux || ciProvider != CiProviders.luci) {
-      await runCommand(
-        flutter,
-        <String>['config', '--enable-${Platform.operatingSystem}-desktop'],
-        workingDirectory: flutterRoot,
-      );
-      await runCommand(
-        dart,
-        <String>[path.join(flutterRoot, 'dev', 'tools', 'examples_smoke_test.dart')],
-        workingDirectory: path.join(flutterRoot, 'examples', 'api'),
-      );
-    }
+    await runCommand(
+      flutter,
+      <String>['config', '--enable-${Platform.operatingSystem}-desktop'],
+      workingDirectory: flutterRoot,
+    );
+    await runCommand(
+      dart,
+      <String>[path.join(flutterRoot, 'dev', 'tools', 'examples_smoke_test.dart')],
+      workingDirectory: path.join(flutterRoot, 'examples', 'api'),
+    );
     for (final FileSystemEntity entity in Directory(path.join(flutterRoot, 'examples')).listSync()) {
       if (entity is! Directory || !Directory(path.join(entity.path, 'test')).existsSync()) {
         continue;
@@ -984,6 +989,7 @@ Future<void> _runFrameworkTests() async {
     await runFixTests('flutter');
     await runFixTests('flutter_test');
     await runFixTests('integration_test');
+    await runFixTests('flutter_driver');
     await runPrivateTests();
   }
 
@@ -1063,6 +1069,7 @@ Future<void> _runFrameworkTests() async {
     'libraries': runLibraries,
     'slow': runSlow,
     'misc': runMisc,
+    'impeller': runImpeller,
   });
 }
 
@@ -1566,8 +1573,10 @@ Future<void> _runCustomerTesting() async {
   await runCommand(
     'git',
     <String>[
-      'checkout',
+      'branch',
+      '-f',
       'master',
+      'origin/master',
     ],
     workingDirectory: flutterRoot,
   );
@@ -2276,8 +2285,6 @@ Future<void> _runFlutterWebTest(String webRenderer, String workingDirectory, Lis
     flutter,
     <String>[
       'test',
-      if (ciProvider == CiProviders.cirrus)
-        '--concurrency=1',  // do not parallelize on Cirrus, to reduce flakiness
       '-v',
       '--platform=chrome',
       '--web-renderer=$webRenderer',
@@ -2471,21 +2478,6 @@ void adjustEnvironmentToEnableFlutterAsserts(Map<String, String> environment) {
     toolsArgs += ' --enable-asserts';
   }
   environment['FLUTTER_TOOL_ARGS'] = toolsArgs.trim();
-}
-
-enum CiProviders {
-  cirrus,
-  luci,
-}
-
-CiProviders? get ciProvider {
-  if (Platform.environment['CIRRUS_CI'] == 'true') {
-    return CiProviders.cirrus;
-  }
-  if (Platform.environment['LUCI_CONTEXT'] != null) {
-    return CiProviders.luci;
-  }
-  return null;
 }
 
 /// Checks the given file's contents to determine if they match the allowed

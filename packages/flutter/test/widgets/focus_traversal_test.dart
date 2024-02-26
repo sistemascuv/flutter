@@ -2414,7 +2414,6 @@ void main() {
       expect(Focus.of(lowerLeftKey.currentContext!).hasPrimaryFocus, isTrue);
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
       expect(Focus.of(upperLeftKey.currentContext!).hasPrimaryFocus, isTrue);
-    // ignore: deprecated_member_use
     }, skip: isBrowser, variant: KeySimulatorTransitModeVariant.all()); // https://github.com/flutter/flutter/issues/35347
 
     testWidgets('Focus traversal actions works when current focus skip traversal', (WidgetTester tester) async {
@@ -2470,7 +2469,6 @@ void main() {
       expect(Focus.of(key2.currentContext!).hasPrimaryFocus, isTrue);
       await tester.sendKeyEvent(LogicalKeyboardKey.tab);
       expect(Focus.of(key3.currentContext!).hasPrimaryFocus, isTrue);
-    // ignore: deprecated_member_use
     }, skip: isBrowser, variant: KeySimulatorTransitModeVariant.all()); // https://github.com/flutter/flutter/issues/35347
 
     testWidgets('Focus traversal inside a vertical scrollable scrolls to stay visible.', (WidgetTester tester) async {
@@ -2577,7 +2575,6 @@ void main() {
       await tester.pump();
       expect(topNode.hasPrimaryFocus, isTrue);
       expect(controller.offset, equals(0.0));
-    // ignore: deprecated_member_use
     }, skip: isBrowser, variant: KeySimulatorTransitModeVariant.all()); // https://github.com/flutter/flutter/issues/35347
 
     testWidgets('Focus traversal inside a horizontal scrollable scrolls to stay visible.', (WidgetTester tester) async {
@@ -2685,7 +2682,6 @@ void main() {
       await tester.pump();
       expect(leftNode.hasPrimaryFocus, isTrue);
       expect(controller.offset, equals(0.0));
-    // ignore: deprecated_member_use
     }, skip: isBrowser, variant: KeySimulatorTransitModeVariant.all()); // https://github.com/flutter/flutter/issues/35347
 
     testWidgets('Arrow focus traversal actions can be re-enabled for text fields.', (WidgetTester tester) async {
@@ -2817,7 +2813,6 @@ void main() {
       expect(focusNodeUpperLeft.hasPrimaryFocus, isTrue);
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
       expect(focusNodeUpperLeft.hasPrimaryFocus, isTrue);
-    // ignore: deprecated_member_use
     }, variant: KeySimulatorTransitModeVariant.all());
 
     testWidgets('Focus traversal does not break when no focusable is available on a MaterialApp', (WidgetTester tester) async {
@@ -2835,7 +2830,6 @@ void main() {
       await tester.idle();
 
       expect(events.length, 2);
-    // ignore: deprecated_member_use
     }, variant: KeySimulatorTransitModeVariant.all());
 
     testWidgets('Focus traversal does not throw when no focusable is available in a group', (WidgetTester tester) async {
@@ -2871,7 +2865,6 @@ void main() {
       await tester.idle();
 
       expect(events.length, 2);
-    // ignore: deprecated_member_use
     }, variant: KeySimulatorTransitModeVariant.all());
 
     testWidgets('Custom requestFocusCallback gets called on focusInDirection up/down/left/right.', (WidgetTester tester) async {
