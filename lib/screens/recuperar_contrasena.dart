@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../clases/auth_manager.dart';
 import '../clases/message_manager.dart';
@@ -11,7 +11,8 @@ class RecuperarContrasenaScreen extends StatefulWidget {
       _RecuperarContrasenaScreenState();
 }
 
-class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> {
+class _RecuperarContrasenaScreenState
+    extends State<RecuperarContrasenaScreen> {
   Auth_Manager authManager = Auth_Manager();
   TextEditingController _emailController = TextEditingController();
 
@@ -19,7 +20,6 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> {
     String email = _emailController.text;
 
     try {
-      // Obtener el token actual
       bool isTokenValid = await authManager.isTokenValid();
 
       if (!isTokenValid) {
@@ -28,11 +28,9 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> {
 
       String? accessToken = authManager.accessToken;
 
-
-
-      // Llamada a la API para recuperar la contraseña
       final response = await http.post(
-        Uri.parse('http://webapicuv.urvaseo.com:8081/wbsWebsisApp/api/Recupera_Contrasena/postall?AspxAutoDetectCookieSupport=1'),
+        Uri.parse(
+            'http://webapicuv.urvaseo.com:8081/wbsWebsisApp/api/Recupera_Contrasena/postall?AspxAutoDetectCookieSupport=1'),
         body: jsonEncode({'_USUARIO': email}),
         headers: {
           'Content-Type': 'application/json',
@@ -46,7 +44,8 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> {
       String? result;
 
       if (responseJson is List && responseJson.isNotEmpty) {
-        final Map<String, dynamic> responseData = responseJson[0] as Map<String, dynamic>;
+        final Map<String, dynamic> responseData =
+            responseJson[0] as Map<String, dynamic>;
         message = responseData['MENSSAGE']?.toString();
       } else if (responseJson is Map<String, dynamic>) {
         message = responseJson['MENSSAGE']?.toString();
@@ -58,21 +57,22 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> {
             message = parsedJson['MENSSAGE']?.toString();
             result = parsedJson['RESULTADO']?.toString();
           } else if (parsedJson is List) {
-            if (parsedJson.isNotEmpty && parsedJson[0] is Map<String, dynamic>) {
-              final Map<String, dynamic> responseData = parsedJson[0] as Map<String, dynamic>;
+            if (parsedJson.isNotEmpty &&
+                parsedJson[0] is Map<String, dynamic>) {
+              final Map<String, dynamic> responseData =
+                  parsedJson[0] as Map<String, dynamic>;
               message = responseData['MENSSAGE']?.toString();
               result = responseData['RESULTADO']?.toString();
-              if (result=='OK'){
-                MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
-                await Future.delayed(Duration(seconds: 5)); // Ajusta el tiempo según sea necesario
-                Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginScreen()),);
-
-              }else {
-                MessageManager.showMessage(context, 'Mensaje: $message', MessageType.error);
+              if (result == 'OK') {
+                MessageManager.showMessage(
+                    context, 'Mensaje: $message', MessageType.success);
+                await Future.delayed(Duration(seconds: 5));
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),);
+              } else {
+                MessageManager.showMessage(
+                    context, 'Mensaje: $message', MessageType.error);
               }
-
-
-
             } else {
               print('La respuesta del servidor no es un formato JSON esperado');
               return;
@@ -91,15 +91,11 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> {
       }
 
       if (message != null) {
-        // Puedes mostrar el mensaje o hacer lo que necesites con él
         print('Mensaje: $message');
-        // Aquí puedes añadir lógica para mostrar el mensaje al usuario
-
-        // En este caso, no necesitas regresar a la pantalla de inicio de sesión
       } else {
-        print('El campo MENSSAGE no está presente o es nulo en la respuesta del servidor');
+        print(
+            'El campo MENSSAGE no está presente o es nulo en la respuesta del servidor');
       }
-
     } catch (e) {
       print('Error al realizar la solicitud HTTP: $e');
     }
@@ -111,27 +107,63 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> {
       appBar: AppBar(
         title: Text('Recuperar Contraseña'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(labelText: 'Correo Electrónico'),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _recuperarContrasena,
-              style: ElevatedButton.styleFrom(
-                primary: Colors.lightBlue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: EdgeInsets.all(20),
+                color: Colors.lightBlue,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.lock_open,
+                      size: 80,
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Recuperar Contraseña',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               ),
-              child: Text('Recuperar Contraseña'),
-            ),
-          ],
+              SizedBox(height: 20),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Correo Electrónico',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: _recuperarContrasena,
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.lightBlue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    'Recuperar Contraseña',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

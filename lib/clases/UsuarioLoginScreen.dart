@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class usuario_login extends StatelessWidget {
+class UsuarioLoginScreen extends StatelessWidget {
   final String nombre;
   final String email;
 
-  usuario_login({required this.nombre, required this.email});
+  UsuarioLoginScreen({required this.nombre, required this.email});
 
   @override
   Widget build(BuildContext context) {

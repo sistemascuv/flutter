@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../clases/menu.dart';
-import '../clases/usuario_login.dart';
+import '../clases/UsuarioLoginScreen.dart';
 
 
 class MainScreen extends StatelessWidget {
@@ -48,7 +48,7 @@ class MainScreen extends StatelessWidget {
           ),
         ],
         currentIndex: 0,
-        selectedItemColor: Colors.deepPurple,
+        selectedItemColor: Color.fromARGB(255, 71, 121, 39),
         onTap: (index) {
           // Agregar lógica para cambiar de pantalla según el índice seleccionado
           // Ejemplo: Navigator.pushNamed(context, '/pagina_$index');

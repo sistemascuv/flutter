@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../clases/message_manager.dart'; // Asegúrate de importar tu clase MessageManager
-import 'login_screen.dart';
+
 import '../clases/auth_manager.dart';
+import '../clases/message_manager.dart';
+import 'login_screen.dart';
 
 class RegistroUsuarioScreen extends StatefulWidget {
   @override
@@ -11,7 +12,6 @@ class RegistroUsuarioScreen extends StatefulWidget {
 }
 
 class _RegistroUsuarioScreenState extends State<RegistroUsuarioScreen> {
-
   Auth_Manager authManager = Auth_Manager();
 
   TextEditingController _cedulaController = TextEditingController();
@@ -22,9 +22,6 @@ class _RegistroUsuarioScreenState extends State<RegistroUsuarioScreen> {
     String correo = _correoController.text;
 
     try {
-      // Agrega la lógica para validar el token aquí
-      // ...
-
       bool isTokenValid = await authManager.isTokenValid();
 
       if (!isTokenValid) {
@@ -58,15 +55,13 @@ class _RegistroUsuarioScreenState extends State<RegistroUsuarioScreen> {
           final Map<String, dynamic> responseData = parsedJson[0] as Map<String, dynamic>;
           message = responseData['MENSSAGE']?.toString();
           result = responseData['RESULTADO']?.toString();
-          if (result=='OK'){
+          if (result == 'OK') {
             MessageManager.showMessage(context, 'Mensaje: $message', MessageType.success);
-            await Future.delayed(Duration(seconds: 5)); // Ajusta el tiempo según sea necesario
-            Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginScreen()),);
-
-          }else {
+            await Future.delayed(Duration(seconds: 5));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()),);
+          } else {
             MessageManager.showMessage(context, 'Mensaje: $message', MessageType.error);
           }
-
         } catch (e) {
           print('Error al decodificar la cadena JSON: $e');
           MessageManager.showMessage(context, 'Mensaje: $e', MessageType.error);
@@ -77,8 +72,6 @@ class _RegistroUsuarioScreenState extends State<RegistroUsuarioScreen> {
         MessageManager.showMessage(context, 'Mensaje: ${responseJson.runtimeType}', MessageType.error);
         return;
       }
-
-
     } catch (e) {
       print('Error al realizar la solicitud HTTP: $e');
     }
@@ -90,26 +83,62 @@ class _RegistroUsuarioScreenState extends State<RegistroUsuarioScreen> {
       appBar: AppBar(
         title: Text('Registro de Usuario'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _cedulaController,
-              decoration: InputDecoration(labelText: 'Cédula de Identidad'),
-            ),
-            SizedBox(height: 16.0),
-            TextField(
-              controller: _correoController,
-              decoration: InputDecoration(labelText: 'Correo Electrónico'),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _registrarUsuario,
-              child: Text('Registrar'),
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: EdgeInsets.all(20),
+                color: Colors.lightGreen,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.person_add_rounded,
+                      size: 80,
+                      color: Colors.white,
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'Registro de Nuevo Usuario',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _cedulaController,
+                decoration: InputDecoration(
+                  labelText: 'Cédula de Identidad',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              TextField(
+                controller: _correoController,
+                decoration: InputDecoration(
+                  labelText: 'Correo Electrónico',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: _registrarUsuario,
+                child: Text('Registrar'),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
